@@ -13,7 +13,6 @@ request['keywordstr'] = keywords.join(", ")
 // grab the user
 request['currentUser'] = user
 log.info "user object ${user}"
-log.info "userService ${users}"
 
 def results = [ ]
 

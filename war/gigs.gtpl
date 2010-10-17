@@ -1,6 +1,6 @@
 <html>
 	<body>
-		<p>Welcome, ${request.currentUser.nickname} (${request.currentUser.email} - ${request.currentUser.userId})
+		<p>Welcome, ${request.currentUser.nickname}
 		<p>RSS Feeds Scanned: ${request.seedstr}</p>
 		<p>Keywords: ${request.keywordstr}</p>
 		
