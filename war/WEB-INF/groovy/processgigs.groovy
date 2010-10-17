@@ -1,14 +1,18 @@
 import com.breomedia.gigbot.GigProcessor
 import com.breomedia.gigbot.ProcessedResults
 
-// Define the pages which contain links to products - our "seeds" in crawl parlance.
-def seeds = ["http://stlouis.craigslist.org/web/index.rss"]
-request['seedstr'] = seeds.join(", ")
+log.info "INPUT " + params.seeds
+log.info "INPUT " + params.keywords
 
-def keywords = ["freelance", "photoshop", "wordpress", "html",
-        "designer", "graphic design", "webdesign", "powerpoint", "css",
-        "flash", "html5", "joomla"]
-request['keywordstr'] = keywords.join(", ")
+//def seeds = ["http://stlouis.craigslist.org/web/index.rss"]
+def seeds = params.seeds.split(", ")
+request['seedstr'] = params.seeds
+
+//def keywords = ["freelance", "photoshop", "wordpress", "html",
+//        "designer", "graphic design", "webdesign", "powerpoint", "css",
+//        "flash", "html5", "joomla"]
+def keywords = params.keywords.split(", ")
+request['keywordstr'] = params.keywords
 
 // grab the user
 request['currentUser'] = user

@@ -46,9 +46,9 @@ class GigProcessor {
 
 						results.matchedListings.add(['title':it.'dc:title', 'link':it.link])
 
-		                log.info "=#" * 12 + " MATCH ${matchedListings+1} " + "=#" * 12
-		                log.info "JOB TITLE: " + it.'dc:title'
-		                log.info "JOB LINK: " + it.link
+		                //log.info "=#" * 12 + " MATCH ${matchedListings+1} " + "=#" * 12
+		                //log.info "JOB TITLE: " + it.'dc:title'
+		                //log.info "JOB LINK: " + it.link
 		                //log.info "JOB DESCRIPTION\n" + description
 		                matchedListings++
 		            }
