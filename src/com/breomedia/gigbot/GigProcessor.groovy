@@ -44,7 +44,7 @@ class GigProcessor {
 
 		            if (description.find(myRegex)) {
 
-						results.matchedListings.add(['title':it.'dc:title', 'link':it.link])
+						results.matchedListings.add(new Listing(title: it.'dc:title', link: it.link))
 
 		                //log.info "=#" * 12 + " MATCH ${matchedListings+1} " + "=#" * 12
 		                //log.info "JOB TITLE: " + it.'dc:title'
@@ -55,14 +55,20 @@ class GigProcessor {
 
 		        }
 
-		        results.stats.matchedListings = matchedListings
-				results.stats.totalItemsProcessed = rss.item.size()
+		        results.matchedListingCount = matchedListings
+				results.totalItemsProcessed = rss.item.size()
 				log.info "Matched ${matchedListings} of ${rss.item.size()} listings."
 
 		    }
 		}
 	
+		GigProcessor.saveResults(user, results)
+	
 		return results
+	}
+	
+	private static void saveResults(user, results) {
+		
 	}
 	
 }

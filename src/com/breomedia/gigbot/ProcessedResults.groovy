@@ -3,6 +3,10 @@ package com.breomedia.gigbot
 class ProcessedResults {
 	
 	List matchedListings = [ ]
-	Map stats = [:]
+	Date lastRun = new Date()
+	
+	// stats
+	Integer totalItemsProcessed
+	Integer matchedListingCount
 	
 }

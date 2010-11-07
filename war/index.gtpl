@@ -12,7 +12,7 @@
 </p>
 
 <p>
-    Check out <a href="/gigs">gigs</a>.
+    Search for <a href="/gigs/search">gigs</a>.
 </p>
 
 <% include '/WEB-INF/includes/footer.gtpl' %>
