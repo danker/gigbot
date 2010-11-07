@@ -9,7 +9,7 @@ class GigProcessor {
 	
 	static ProcessedResults process(user, seeds, keywords) {
 	
-		ProcessedResults results = new ProcessedResults()
+		ProcessedResults results = new ProcessedResults(owner: user.nickname)
 		
 		def slurper = new XmlSlurper()
 
@@ -62,13 +62,9 @@ class GigProcessor {
 		    }
 		}
 	
-		GigProcessor.saveResults(user, results)
+		//GigProcessor.saveResults(results)
 	
 		return results
-	}
-	
-	private static void saveResults(user, results) {
-		
 	}
 	
 }

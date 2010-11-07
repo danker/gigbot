@@ -2,11 +2,12 @@ package com.breomedia.gigbot
 
 class ProcessedResults {
 	
+	String owner
 	List matchedListings = [ ]
 	Date lastRun = new Date()
 	
 	// stats
-	Integer totalItemsProcessed
-	Integer matchedListingCount
+	Long totalItemsProcessed
+	Long matchedListingCount
 	
 }

@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Gaelyk</title>
+        <title>The GigBot</title>
         
         <link rel="shortcut icon" href="/images/gaelyk-small-favicon.png" type="image/png">
         <link rel="icon" href="/images/gaelyk-small-favicon.png" type="image/png">
