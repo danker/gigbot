@@ -18,7 +18,6 @@ request['keywordstr'] = userPrefs.keywords
 
 // grab the user
 request['currentUser'] = user
-log.info "user object ${user}"
 
 request['results'] = getResults(seeds, keywords)
 

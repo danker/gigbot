@@ -7,7 +7,7 @@
 		<p>RSS Feeds Scanned: ${request.seedstr}</p>
 		<p>Keywords: ${request.keywordstr}</p>
 		
-		<h1>${request.results.matchedListingCount} Matchings Gigs as of: ${request.results.lastRun.format("EEE, d MMM yyyy HH:mm:ss z")}</h1>
+		<h1>${request.results.matchedListingCount} Matchings Gigs as of: ${request.results.lastRun.format("EEE, d MMM yyyy HH:mm:ss zzz")}</h1>
 		<ul>
 			<% request.results.matchedListings.each { %>
 			<li><a href="${it.link}">${it.title}</a></li>
