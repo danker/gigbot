@@ -104,5 +104,14 @@ private ProcessedResults findNewGigsForUser(ProcessedResultsDAO processedResults
 // alertUser
 // ------------------------------------
 private void alertUser(UserPreferences userPref, ProcessedResults results) {
-	// TODO: Implement email and IM alerting
+	
+	// TODO: Create an app-specific reciever email address, so we can use that in the "sender" attribute
+	// http://code.google.com/appengine/docs/java/mail/overview.html
+	if (userPref.alertViaEmail) {
+		mail.send sender: "danker@gmail.com",
+			to: "${userPref.owner}@gmail.com",
+			subject: "GigBot Search Results",
+			htmlBody: "The GigBot found ${results.matchedListingCount} gigs based on your search preferences.<br/>http://thegigbot.appspot.com/gigs/list",
+	}
+	
 }
