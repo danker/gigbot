@@ -4,7 +4,7 @@
 
 <h2>Edit User Prefs for ${request.currentUser.nickname}</h2>
 
-<form action="/gigs/userprefsupdate" method="GET">
+<form action="/gigs/userprefsupdate" method="POST">
 
 	<input type="hidden" name="id" value="${request.upKey?.id ?: ""}" />
 

@@ -16,9 +16,7 @@ request['seedstr'] = userPrefs.seeds
 def keywords = userPrefs.keywords.split(", ")
 request['keywordstr'] = userPrefs.keywords
 
-// grab the user
 request['currentUser'] = user
-
 request['results'] = getResults(seeds, keywords)
 
 forward 'gigs.gtpl'

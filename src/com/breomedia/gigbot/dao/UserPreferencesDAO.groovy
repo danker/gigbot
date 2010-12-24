@@ -32,14 +32,20 @@ class UserPreferencesDAO {
 	// getPreferencesForUser
 	// ------------------------------------
 	public UserPreferences getPreferencesForUser(user) {
+		return getUserPreferencesObjectFromEntity(getPreferencesEntityForUser(user))		
+	}
+	
+	// ------------------------------------
+	// getPreferencesEntityForUser
+	// ------------------------------------
+	public def getPreferencesEntityForUser(user) {
 		
 		def query = new Query("UserPreferences")
 		query.addFilter("owner", Query.FilterOperator.EQUAL, user)
 		PreparedQuery preparedQuery = DatastoreServiceFactory.datastoreService.prepare(query)
-		def upEntity = preparedQuery.asSingleEntity()
-
-		return getUserPreferencesObjectFromEntity(upEntity)
 		
+		return preparedQuery?.asSingleEntity()
+	
 	}
 
 	// ------------------------------------
@@ -47,6 +53,8 @@ class UserPreferencesDAO {
 	// ------------------------------------	
 	private UserPreferences getUserPreferencesObjectFromEntity(upEntity) {
 		
+		// TODO: Figure out why "up = upEntity as UserPreferences" barfs on non-string values when the value from the Entity is null.
+		// NOTE: the above would only work in a groovlet...but I still can't get it to work regardless
 		UserPreferences up = new UserPreferences()
 		
 		if (upEntity.runInterval) {

@@ -8,5 +8,5 @@ get "/book/isbn/@isbn", forward: "/WEB-INF/groovy/book.groovy?isbn=@isbn", valid
 get "/hello", forward: "/hello.gtpl"
 get "/gigs/list", forward: "/listgigs.groovy"
 get "/gigs/userprefs", forward: "/getuserprefs.groovy"
-get "/gigs/userprefsupdate", forward: "/saveuserprefs.groovy"
+post "/gigs/userprefsupdate", forward: "/saveuserprefs.groovy"
 get "/cron/findgigs", forward: "/gigscron.groovy"

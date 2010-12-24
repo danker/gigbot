@@ -3,7 +3,10 @@
 <h1>Welcome</h1>
 
 <p>
-    What <a href="datetime.groovy">time</a> is it?
+	<% if (user && users.isUserAdmin()) { %> 
+		You're an Admin!<br>
+		What <a href="datetime.groovy">time</a> is it?
+	<% } %>
 </p>
 
 <% if (users.isUserLoggedIn()) { %>

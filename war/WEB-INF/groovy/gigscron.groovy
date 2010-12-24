@@ -3,48 +3,13 @@ import com.breomedia.gigbot.ProcessedResults
 import com.breomedia.gigbot.Listing
 import com.breomedia.gigbot.UserPreferences
 import com.breomedia.gigbot.dao.ProcessedResultsDAO
+import com.breomedia.gigbot.dao.UserPreferencesDAO
 
 import com.google.appengine.api.datastore.*
 import static com.google.appengine.api.datastore.FetchOptions.Builder.*
 
 // run each users job based on their preferences 
-process(getUserPreferences())
-
-// ------------------------------------
-// getUserPreferences
-// ------------------------------------
-private List getUserPreferences() {
-	
-	List userPrefs = new ArrayList()
-	
-	def query = new Query("UserPreferences")
-	PreparedQuery preparedQuery = datastore.prepare(query)
-	// TODO: Gracefully handle more than a thousand users
-	preparedQuery.asList(withLimit(1000)).each { upEntity ->
-		
-		UserPreferences up = new UserPreferences()
-		
-		if (upEntity.runInterval) {
-			up.runInterval = upEntity.runInterval as Integer
-		}
-		if (upEntity.alertViaEmail) {
-			up.alertViaEmail = true
-		}
-		if (upEntity.alertViaGTalk) {
-			up.alertViaGTalk = true
-		}
-		up.seeds = upEntity.seeds
-		up.keywords = upEntity.keywords
-		up.owner = upEntity.owner
-		
-		userPrefs.add(up)
-		//TODO: MOVE THIS TO A DAO!!!
-		//TODO: wish I could do it this way!
-		//userPrefs.add(it as UserPreferences)
-	}
-	
-	return userPrefs
-}
+process(new UserPreferencesDAO().getUserPreferences())
 
 // ------------------------------------
 // process
@@ -84,7 +49,7 @@ private boolean shouldProcess(UserPreferences userPrefs, ProcessedResults proces
 	boolean shouldProcess = false
 	
 	use (groovy.time.TimeCategory) {
-		if (now > (userPrefs.runInterval.hours + processedResults.lastRun)) {
+		if (userPrefs.runInterval && (now > (userPrefs.runInterval.hours + processedResults.lastRun))) {
 			shouldProcess = true
 		}
 	}
@@ -95,7 +60,7 @@ private boolean shouldProcess(UserPreferences userPrefs, ProcessedResults proces
 // ------------------------------------
 // deleteResultsAndListings
 // ------------------------------------
-private void deleteResultsAndListings(String user) {
+private void deleteResultsAndListings(String user) { //TODO: Get this code out of here into a DAO
 
 	// delete the ProcessedResults entity
 	datastore.withTransaction {
