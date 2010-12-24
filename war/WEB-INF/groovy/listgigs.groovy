@@ -4,9 +4,6 @@ import com.breomedia.gigbot.UserPreferences
 import com.breomedia.gigbot.dao.ProcessedResultsDAO
 import com.breomedia.gigbot.dao.UserPreferencesDAO
 
-import com.google.appengine.api.datastore.*
-import static com.google.appengine.api.datastore.FetchOptions.Builder.*
-
 // get the prefs for the currently logged-in user
 UserPreferences userPrefs = new UserPreferencesDAO().getPreferencesForUser(user.nickname)
 
