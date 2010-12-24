@@ -111,7 +111,7 @@ private void alertUser(UserPreferences userPref, ProcessedResults results) {
 		mail.send sender: "danker@gmail.com",
 			to: "${userPref.owner}@gmail.com",
 			subject: "GigBot Search Results",
-			htmlBody: "The GigBot found ${results.matchedListingCount} gigs based on your search preferences.<br/>http://thegigbot.appspot.com/gigs/list",
+			htmlBody: "The GigBot found ${results.matchedListingCount} gigs based on your search preferences.<br/>http://thegigbot.appspot.com/gigs/list"
 	}
 	
 }
