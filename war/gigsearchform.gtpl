@@ -1,6 +1,6 @@
 <html>
 	<body>
-		<form action="/gigs/list" method="get">
+		<form action="/gigs/list" method="post">
 			<p>RSS Feeds: (comma-separated)</p>
 			<textarea name="seeds" rows="10" cols="50">http://stlouis.craigslist.org/web/index.rss</textarea>
 			<p>Keywords: (comma-separated)</p>

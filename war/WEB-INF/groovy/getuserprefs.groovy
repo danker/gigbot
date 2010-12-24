@@ -10,6 +10,7 @@ Entity upEntity = preparedQuery.asSingleEntity()
 UserPreferences up = new UserPreferences()
 if (upEntity) {
 	// TODO: Figure out why "up = upEntity as UserPreferences" barfs on non-string values when the value from the Entity is null.
+	// TODO: Possibly move this to a UserPrefs DAO because we're converting from an Entity to POGO here and in gigscron.groovy
 	if (upEntity.runInterval) {
 		up.runInterval = upEntity.runInterval as Integer
 	}

@@ -30,9 +30,9 @@
 
 	<div>
 		<p><label for="runInterval">How often would you like to check for new gigs?</label></p>
-		Once daily: <input type="radio" name="runInterval" value="1" ${!(request.userPrefs?.runInterval == 1) ?: "checked"} /><br/>
-		Twice daily: <input type="radio" name="runInterval" value="2" ${!(request.userPrefs?.runInterval == 2) ?: "checked"} /><br/>
-		Four times daily: <input type="radio" name="runInterval" value="4" ${!(request.userPrefs?.runInterval == 4) ?: "checked"} />
+		Once daily: <input type="radio" name="runInterval" value="24" ${!(request.userPrefs?.runInterval == 24) ?: "checked"} /><br/>
+		Twice daily: <input type="radio" name="runInterval" value="12" ${!(request.userPrefs?.runInterval == 12) ?: "checked"} /><br/>
+		Four times daily: <input type="radio" name="runInterval" value="6" ${!(request.userPrefs?.runInterval == 6) ?: "checked"} />
 	</div>
 	
 	<div>

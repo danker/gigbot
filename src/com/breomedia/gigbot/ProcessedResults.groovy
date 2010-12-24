@@ -10,4 +10,7 @@ class ProcessedResults {
 	Long totalItemsProcessed
 	Long matchedListingCount
 	
+	String toString() {
+		"owner: $owner, lastRun: $lastRun, totalItemsProcessed: $totalItemsProcessed, matchedListingCount: $matchedListingCount, matchedListings: $matchedListings"
+	}
 }

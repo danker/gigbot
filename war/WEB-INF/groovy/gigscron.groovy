@@ -2,6 +2,7 @@ import com.breomedia.gigbot.GigProcessor
 import com.breomedia.gigbot.ProcessedResults
 import com.breomedia.gigbot.Listing
 import com.breomedia.gigbot.UserPreferences
+import com.breomedia.gigbot.dao.ProcessedResultsDAO
 
 import com.google.appengine.api.datastore.*
 import static com.google.appengine.api.datastore.FetchOptions.Builder.*
@@ -14,13 +15,32 @@ process(getUserPreferences())
 // ------------------------------------
 private List getUserPreferences() {
 	
-	List userPrefs = null
+	List userPrefs = new ArrayList()
 	
 	def query = new Query("UserPreferences")
 	PreparedQuery preparedQuery = datastore.prepare(query)
 	// TODO: Gracefully handle more than a thousand users
-	preparedQuery.asList(withLimit(1000)).each {
-		userPrefs.add(it as UserPreferences)
+	preparedQuery.asList(withLimit(1000)).each { upEntity ->
+		
+		UserPreferences up = new UserPreferences()
+		
+		if (upEntity.runInterval) {
+			up.runInterval = upEntity.runInterval as Integer
+		}
+		if (upEntity.alertViaEmail) {
+			up.alertViaEmail = true
+		}
+		if (upEntity.alertViaGTalk) {
+			up.alertViaGTalk = true
+		}
+		up.seeds = upEntity.seeds
+		up.keywords = upEntity.keywords
+		up.owner = upEntity.owner
+		
+		userPrefs.add(up)
+		//TODO: MOVE THIS TO A DAO!!!
+		//TODO: wish I could do it this way!
+		//userPrefs.add(it as UserPreferences)
 	}
 	
 	return userPrefs
@@ -31,20 +51,21 @@ private List getUserPreferences() {
 // ------------------------------------
 private void process(List userPrefs) {
 	
+	ProcessedResultsDAO processedResultsDAO = new ProcessedResultsDAO()
+	
 	userPrefs.each { userPref ->
-		
+
 		// get the latest Processed Results, if any
-		ProcessedResults oldResults = getResultsFromDatastore() //TODO: Refactor...using this method in 2 diff groovlets!
+		ProcessedResults oldResults = processedResultsDAO.getResultsFromDatastore(userPref.owner) 
 		
 		// determine if we should process gigs, based on last run and user preference
 		if (shouldProcess(userPref, oldResults)) {
 			
-			// delete old results and listings
+			// delete old results and listings (TODO: Should we ever hold on to old listings?)
 			deleteResultsAndListings(userPref.owner)
 			
 			// run new job and save results
-			ProcessedResults newProcessedResults = GigProcessor.process(userPref.owner, userPref.seeds, userPref.keywords)
-			saveResults(newProcessedResults) //TODO: Refactor...using this method in 2 diff groovlets
+			newProcessedResults = findNewGigsForUser(processedResultsDAO, userPref)
 			
 			// alert via email or gtalk
 			alertUser(userPref, newProcessedResults)
@@ -63,7 +84,7 @@ private boolean shouldProcess(UserPreferences userPrefs, ProcessedResults proces
 	boolean shouldProcess = false
 	
 	use (groovy.time.TimeCategory) {
-		if (now > ((24/userPrefs.runInterval).hours + processedResults.lastRun)) {
+		if (now > (userPrefs.runInterval.hours + processedResults.lastRun)) {
 			shouldProcess = true
 		}
 	}
@@ -72,85 +93,46 @@ private boolean shouldProcess(UserPreferences userPrefs, ProcessedResults proces
 }
 
 // ------------------------------------
-// getResultsFromDatastore
-// ------------------------------------
-private ProcessedResults getResultsFromDatastore() {
-	
-	ProcessedResults results = null
-	
-	def query = new Query("ProcessedResults")
-	query.addFilter("owner", Query.FilterOperator.EQUAL, user.nickname)
-	PreparedQuery preparedQuery = datastore.prepare(query)
-	def resultEntity = preparedQuery.asSingleEntity()
-	
-	if (resultEntity) {
-
-		// something was returned, so grab all the listings too and
-		// construct the ProcessedResults object
-		results = resultEntity as ProcessedResults
-		
-		query = new Query("Listing")
-		query.addFilter("owner", Query.FilterOperator.EQUAL, user.nickname)
-		preparedQuery = datastore.prepare(query)
-		// get all listings for the logged in user and add to the
-		// ProcessedResults object
-		preparedQuery.asList(withLimit(1000)).each {
-			results.matchedListings.add(new Listing(title: it.title, link: it.link))
-		}
-		
-	}
-	
-	return results
-}
-
-// ------------------------------------
-// saveResults
-// ------------------------------------
-private void saveResults(results) {
-
-	Entity resultsEntity = new Entity("ProcessedResults")
-
-	resultsEntity.matchedListingCount = results.matchedListingCount
-	resultsEntity.totalItemsProcessed = results.totalItemsProcessed
-	resultsEntity.owner = results.owner
-	resultsEntity.lastRun = results.lastRun
-	resultsEntity.save()
-
-	results.matchedListings.each {
-		Entity listing = it as Entity
-		listing.owner = results.owner
-		listing.save()
-	}
-
-}
-
-// ------------------------------------
 // deleteResultsAndListings
 // ------------------------------------
 private void deleteResultsAndListings(String user) {
-	
+
 	// delete the ProcessedResults entity
 	datastore.withTransaction {
 		def query = new Query("ProcessedResults")
 		query.addFilter("owner", Query.FilterOperator.EQUAL, user)
 		PreparedQuery preparedQuery = datastore.prepare(query)
-		preparedQuery.asSingleEntity().delete()
+		preparedQuery?.asSingleEntity()?.delete()
 	}
-	
+
 	// delete the Listings
-	datastore.withTransaction {
-		def query = new Query("Listing")
-		query.addFilter("owner", Query.FilterOperator.EQUAL, user)
-		PreparedQuery preparedQuery = datastore.prepare(query)
-		preparedQuery = datastore.prepare(query)
-		// get all listings for the logged in user and add to the
-		// ProcessedResults object
-		// TODO: Deal with more than 1000 result gracefully
-		preparedQuery.asList(withLimit(1000)).each { listing ->
-			listing.delete()
-		}
+	def query = new Query("Listing")
+	query.addFilter("owner", Query.FilterOperator.EQUAL, user)
+	PreparedQuery preparedQuery = datastore.prepare(query)
+	preparedQuery = datastore.prepare(query)
+	// get all listings for the user and add to the ProcessedResults object
+	// TODO: Deal with more than 1000 result gracefully
+	preparedQuery?.asList(withLimit(1000)).each { listing ->
+		listing.delete()
+	}
+
+}
+
+// ------------------------------------
+// findNewGigsForUser
+// ------------------------------------
+private ProcessedResults findNewGigsForUser(ProcessedResultsDAO processedResultsDAO, UserPreferences userPref) {
+	
+	ProcessedResults newProcessedResults = null
+
+	if (userPref.seeds && userPref.keywords) {
+		newProcessedResults = GigProcessor.process(userPref.owner, userPref.seeds.split(", "), userPref.keywords.split(", "))
+		processedResultsDAO.saveResults(newProcessedResults)		
+	} else {
+		log.info("User ${userPref.owner} does not have seed URLs or Search Terms (Keywords) specified.");
 	}
 	
+	return newProcessedResults
 }
 
 // ------------------------------------

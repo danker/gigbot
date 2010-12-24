@@ -1,19 +1,20 @@
 import com.breomedia.gigbot.GigProcessor
 import com.breomedia.gigbot.ProcessedResults
-import com.breomedia.gigbot.Listing
+import com.breomedia.gigbot.UserPreferences
 import com.breomedia.gigbot.dao.ProcessedResultsDAO
+import com.breomedia.gigbot.dao.UserPreferencesDAO
 
 import com.google.appengine.api.datastore.*
 import static com.google.appengine.api.datastore.FetchOptions.Builder.*
 
-//TODO: REMOVE THIS GROOVLET (and possibly gigsearchform.gtpl)
+// get the prefs for the currently logged-in user
+UserPreferences userPrefs = new UserPreferencesDAO().getPreferencesForUser(user.nickname)
 
-// TODO: Sanatize inputs!
-def seeds = params.seeds.split(", ")
-request['seedstr'] = params.seeds
+def seeds = userPrefs.seeds.split(", ")
+request['seedstr'] = userPrefs.seeds
 
-def keywords = params.keywords.split(", ")
-request['keywordstr'] = params.keywords
+def keywords = userPrefs.keywords.split(", ")
+request['keywordstr'] = userPrefs.keywords
 
 // grab the user
 request['currentUser'] = user
