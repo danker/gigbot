@@ -49,7 +49,7 @@ private boolean shouldProcess(UserPreferences userPrefs, ProcessedResults proces
 	boolean shouldProcess = false
 	
 	use (groovy.time.TimeCategory) {
-		if (userPrefs.runInterval && (now > (userPrefs.runInterval.hours + processedResults.lastRun))) {
+		if ((userPrefs.runInterval != null) && (now > (userPrefs.runInterval.hours + processedResults.lastRun))) {
 			shouldProcess = true
 		}
 	}
