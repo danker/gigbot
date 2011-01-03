@@ -55,20 +55,26 @@ class UserPreferencesDAO {
 		
 		// TODO: Figure out why "up = upEntity as UserPreferences" barfs on non-string values when the value from the Entity is null.
 		// NOTE: the above would only work in a groovlet...but I still can't get it to work regardless
-		UserPreferences up = new UserPreferences()
+		UserPreferences up = null
 		
-		if (upEntity.runInterval) {
-			up.runInterval = upEntity.runInterval as Integer
+		if (upEntity) {
+			
+			up = new UserPreferences()
+
+			if (upEntity.runInterval) {
+				up.runInterval = upEntity.runInterval as Integer
+			}
+			if (upEntity.alertViaEmail) {
+				up.alertViaEmail = true
+			}
+			if (upEntity.alertViaGTalk) {
+				up.alertViaGTalk = true
+			}
+			up.seeds = upEntity.seeds
+			up.keywords = upEntity.keywords
+			up.owner = upEntity.owner			
+		
 		}
-		if (upEntity.alertViaEmail) {
-			up.alertViaEmail = true
-		}
-		if (upEntity.alertViaGTalk) {
-			up.alertViaGTalk = true
-		}
-		up.seeds = upEntity.seeds
-		up.keywords = upEntity.keywords
-		up.owner = upEntity.owner
 		
 		return up
 	}
